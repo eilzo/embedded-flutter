@@ -3,7 +3,7 @@
 * Clone project.
 * Add `.env` file to `flutter_app/` folder. Add `apiKey='<yourAPIKey>'` with a key from ChatGPT's API.
 * `cd` to `flutter_app/` and run `flutter build web`.
-* Run a local server using `http-server` or similar
+* `cd` to `flutter_app/build/web/` and run a local server using `http-server` or similar
 * Head to `localhost:8080` in a browser.
 
 ## Useful File locations ##
