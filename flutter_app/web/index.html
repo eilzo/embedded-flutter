@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+
+    <base href="/" />
+
+    <title>Flutter Web Component</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Outfit"
+    />
+    <style>
+      body {
+        font-family: "Outfit", sans-serif;
+      }
+      #app-container {
+        height: 800px;
+        width: 600px;
+        background-color: grey;
+        margin: 0 auto;
+        border: none;
+        visibility: hidden;
+        border-radius: 10px;
+      }
+      #circle {
+        width: 50px;
+        height: 50px;
+        background: lightblue;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 40px;
+        right: 40px;
+      }
+      #circle:hover {
+        background: lightskyblue;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Outfit"
+    />
+  </head>
+  <body>
+    <flutter-app height="100%" width="100%"></flutter-app>
+    <h1>Welcome to the site!</h1>
+    <h2>Tap the lower right button to open the FlutterFlow chat window.</h2>
+    <p>
+      The chat window is a compiled Flutter web application rendered in an
+      iFrame.
+    </p>
+    <div>
+      <input type="text" size="50" id="message_text" />&nbsp;<input
+      type="button" id="post_message" value="Send"">
+    </div>
+    <div onclick="createChatWidget()" id="circle"></div>
+    <script>
+      class FlutterApp extends HTMLElement {
+        constructor() {
+          super();
+          this.innerHTML = `
+    <style>
+        body {
+          font-family: "Outfit", sans-serif;
+        }
+        #app-container {
+          height: 70%;
+          width: 40%;
+          margin: 0 auto;
+          position: absolute;
+          right: 10px;
+          bottom: 10px;
+          z-index: 2;
+        }
+      </style>
+    <iframe 
+        id="app-container"
+        src="flutter_app/build/web/app.html"
+        style="background: #FFFFFF;" 
+        frameborder="0"
+        >
+    </iframe>
+        `;
+        }
+      }
+
+      customElements.define("flutter-app", FlutterApp);
+
+      function createChatWidget() {
+        document.getElementById("app-container").style.visibility = "visible";
+      }
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("flutter_service_worker.js");
+        });
+      }
+
+      function pageProcessing() {
+        let messageButton = window.document.getElementById("post_message");
+        messageButton.addEventListener("click", () => {
+          let message = window.document.getElementById("message_text").value;
+          document.getElementById("app-container").contentWindow.postMessage(
+            {
+              sender: "main_page",
+              message: message,
+            },
+            "*"
+          );
+        });
+      }
+      window.document.addEventListener("readystatechange", () => {
+        if (window.document.readyState == "complete") {
+          pageProcessing();
+        }
+      });
+    </script>
+    <flutter-app width="600px" height="800px"></flutter-app>
+  </body>
+</html>
